@@ -1,50 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ pathRoot ~ 'public/css/bootstrap.min.css' }}" />
-    <link rel="stylesheet" href="{{ pathRoot ~ 'public/css/style.css' }}" />
-    <title>Mon projet MVC</title>
-</head>
-<body>
-
-
-    {% block header %}
-    <header class="container">
-        <h1>Mon projet Ticketing</h1>
-        <nav class="nav">
-            <ul class="nav justify-content-start">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ pathRoot }}"> Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ pathRoot ~ 'users/listusers' }}"> Utilisateurs</a>
-                </li> 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ pathRoot ~ 'users/createuser' }}"> Créer un utilisateur</a>
-                </li>    
-            </ul>
-        </nav>
-    </header>
-    {% endblock %}
-
-
-    <main class="container">
-        <div class="row">
-            <div class="col-12 mt-2">
-
-                {% block body %}{% endblock %}
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="{{ pathRoot ~ 'public/css/bootstrap.min.css' }}" />
+        <link rel="stylesheet" href="{{ pathRoot ~ 'public/css/style.css' }}" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/bootstrap-table.min.css" rel="stylesheet">        
+        <title>Ticketing</title>        
+    </head>
+    <body>
+        <header>
+            {% block header %}
+            <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
+                <div class="col-3">
+                    <h1>Ticketing</h1>
+                </div>
             </div>
-        </div>
-    </main>
+            {% endblock %}
+        </header>
 
+        <main class="container">
+            <div class="row">
+                <div class="col-12 mt-2">
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </main>
 
+        <footer class="container">
+            {% block footer %}{% endblock %}
+        </footer>
+    </body>
 
-    <footer class="container">
-        {% block footer %}{% endblock %}
-    </footer>
-</body>
+    <script src="https://kit.fontawesome.com/d576863e16.js" crossorigin="anonymous"></script>
+    <script type="module" src="{{ pathRoot ~ 'public/js/custom.js' }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/bootstrap-table.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/locale/bootstrap-table-fr-FR.min.js"></script>
 </html>

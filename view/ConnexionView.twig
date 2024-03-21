@@ -1,0 +1,42 @@
+{% extends 'Pagelayout.twig' %}
+
+{% block header %}
+    <header>
+        <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
+            <div class="col-8">
+                <h1>Formulaire de connexion</h1>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="container">
+        {% if alert is defined and message is defined %}
+            <div class="row"><p class="col-10 alert {{alert}}">{{message}}</p></div>
+        {% endif %}
+        <div class="row">
+            <div class="col-12">
+                <form name="accesform" method="post" action="{{ pathRoot ~ 'security/login' }}">
+                    <div class="mb-3 row">
+                        <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="inputLogin" placeholder="Votre login" name="login" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Mot de passe</label>
+                        <div class="col-sm-4">
+                            <input type="password" class="form-control" id="inputPassword" name="password" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary mb-3">Connexion</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

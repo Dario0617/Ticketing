@@ -50,7 +50,7 @@ if( $nbRequest >=1 && !empty( $tabRequest[0] ) ) {
 	// Retrieve vars
     $params['vars'] = $tabRequest;
 } else {
-    $controllerName = 'Index';
+    $controllerName = 'Security';
 }
 
 

@@ -52,7 +52,7 @@ abstract class Controller
     /**
      *  Get request parameters in $this->vars property
      *
-     * @param array $params
+     *  @param array $params
      */
     protected function setParams( array $params=[] )
     {

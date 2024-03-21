@@ -1,0 +1,50 @@
+{% extends 'Pagelayout.twig' %}
+
+{% block header %}
+    <header>
+        <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
+            <div class="col-8">
+                <h1>Listes des tickets</h1>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+<div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0;">
+  <div class="row" style="padding: 2%; background-color: #d3d3d352; border-bottom-style: inherit;">
+    <div class="col-4">
+      <button class="btn btn-success mr-2" id="btnTicketOuverts">Ticket ouverts</button>
+      <button class="btn btn-secondary mr-2" id="btnTicketFermes">Ticket fermés</button>
+      
+    </div>
+    <div class="col-8" style="justify-items: end; display: grid;">
+      <a class="btn btn-primary" href="{{ pathRoot ~ 'ticket/create' }}" id="btnNouveauTicket">Nouveau ticket</a>
+    </div>
+  </div>
+
+  <table style="padding-bottom: 2%" id="table"
+    data-toggle="table" 
+    data-pagination="true" 
+    data-search="true"
+    data-pagination-pre-text="Précédent"
+    data-pagination-next-text="Suivant"
+    data-pagination-v-align="both">
+    <thead>
+      <tr>
+        <th data-field="id">N°</th>
+        <th data-field="sujet" data-sortable="true">Sujet</th>
+        <th data-field="creation" data-sortable="true">Création</th>
+        <th data-field="mise_a_jour" data-sortable="true">Mise à jour</th>
+        <th data-field="demande" data-sortable="true">Demande</th>
+        <th data-field="etat" data-sortable="true">Etat</th>
+        <th data-field="action" data-formatter="actionFormatter">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'Pagelayout.twig' %}
+
+{% block header %}
+    <header>
+        <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
+            <div class="col-8">
+                <h1>Création d'un ticket</h1>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+<div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0;">
+  <div class="row p-3" style="background-color: #d3d3d352; border-bottom-style: inherit;">
+      <h4>NOUVEAU TICKET</h4>
+  </div>
+
+  <form class="p-1 needs-validation" novalidate name="createTicketForm" method="post" action="{{ pathRoot ~ 'ticket/save' }}">
+    <div class="form-group row border p-1 m-0">
+      <label for="requestType" class="col-5 col-form-label font-weight-bold">Type de demande* : </label>
+      <div class="col-7 border-left">
+        <select class="form-control" id="requestType" required>
+          <option value="">-- Choisissez le type de demande --</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="priority" class="col-5 col-form-label font-weight-bold">Priorité* :</label>
+      <div class="col-7 border-left">
+        <select class="form-control" id="priority" required>
+          <option value="">-- Choisissez la priorité --</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="subject" class="col-5 col-form-label font-weight-bold">Sujet* :</label>
+      <div class="col-7 border-left">
+        <input type="text" class="form-control" id="subject" placeholder="Sujet" required>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="message" class="col-5 col-form-label font-weight-bold">Message* :</label>
+      <div class="col-7 border-left">
+        <textarea class="form-control" id="message" placeholder="Message" rows="3" required></textarea>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="file" class="col-5 col-form-label font-weight-bold">Pièce jointe :</label>
+      <div class="col-7 border-left">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="file">
+          <label class="custom-file-label" for="file">Choisir le fichier</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <button class="btn btn-primary" type="submit">Créer le ticket</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
