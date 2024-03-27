@@ -4,7 +4,7 @@
     <header>
         <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
             <div class="col-8">
-                <h1>Listes des tickets</h1>
+                <h1>Liste des tickets</h1>
             </div>
         </div>
     </header>
@@ -14,12 +14,12 @@
 <div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0;">
   <div class="row" style="padding: 2%; background-color: #d3d3d352; border-bottom-style: inherit;">
     <div class="col-4">
-      <button class="btn btn-success mr-2" id="btnTicketOuverts">Ticket ouverts</button>
-      <button class="btn btn-secondary mr-2" id="btnTicketFermes">Ticket fermés</button>
+      <button class="btn btn-success mr-2" id="btnTicketOuverts"><i class="fa-regular fa-circle-check"></i>&nbsp;Ticket ouverts</button>
+      <button class="btn btn-secondary mr-2" id="btnTicketFermes"><i class="fa-solid fa-x"></i>&nbsp;Ticket fermés</button>
       
     </div>
     <div class="col-8" style="justify-items: end; display: grid;">
-      <a class="btn btn-primary" href="{{ pathRoot ~ 'ticket/create' }}" id="btnNouveauTicket">Nouveau ticket</a>
+      <a class="btn btn-primary" href="{{ pathRoot ~ 'ticket/create' }}"><i class="fa-solid fa-ticket"></i>&nbsp;Nouveau ticket</a>
     </div>
   </div>
 

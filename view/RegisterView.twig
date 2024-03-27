@@ -4,7 +4,7 @@
     <header>
         <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
             <div class="col-8">
-                <h1>Formulaire de connexion</h1>
+                <h1>Formulaire d'inscription</h1>
             </div>
         </div>
     </header>
@@ -17,7 +17,7 @@
         {% endif %}
         <div class="row">
             <div class="col-12">
-                <form name="accesform" method="post" action="{{ pathRoot ~ 'security/login' }}">
+                <form name="accesform" method="post" action="{{ pathRoot ~ 'security/createAccount' }}">
                     <div class="mb-3 row">
                         <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
                         <div class="col-sm-4">
@@ -31,11 +31,17 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
+                        <label for="inputConfirmPassword" class="col-sm-2 col-form-label">Confirmer mot de passe</label>
+                        <div class="col-sm-4">
+                            <input type="password" class="form-control" id="inputConfirmPassword" name="confirmPassword" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
                         <div class="col-sm-8">
-                            <a href="{{ pathRoot ~ 'security/register' }}" class="link-info">Je n'ai pas de compte</a>
+                            <a href="{{ pathRoot ~ 'security' }}" class="link-info">J'ai déjà un compte</a>
                         </div>
                         <div class="col-sm-4 justify-content-end">
-                            <button type="submit" class="btn btn-primary mb-3"><i class="fa-solid fa-door-open"></i>&nbsp;Connexion</button>
+                            <button type="submit" class="btn btn-primary mb-3"><i class="fa-solid fa-clipboard-check"></i>&nbsp;Inscription</button>
                         </div>
                     </div>
                 </form>

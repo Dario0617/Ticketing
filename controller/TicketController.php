@@ -32,4 +32,23 @@ class TicketController extends Controller
         $data = [];
         $this->render("createTicket", $data);
     }
+
+    /**
+     *  saveTicket et redirect to ticketsView
+     */
+    public function saveAction()
+    {
+        $data = [];
+        if( isset( $this->vars['type'] ) && isset( $this->vars['priority'] ) && isset( $this->vars['subject'] ) && 
+        isset( $this->vars['message'] )){
+            $type = $this->vars["type"];
+            $priority = $this->vars["priority"];
+            $subject = $this->vars["subject"];
+            $message = $this->vars["message"];
+            //$file = $this->vars["file"];
+            $ticket = new Ticket(['type'=>$type, 'priority'=>$priority, 'subject'=>$subject, 'message'=>$message]);
+            //$this->TicketManager->SaveTicket($ticket);
+        }
+        $this->render("createTicket", $data);
+    }
 }

@@ -23,4 +23,21 @@ class UserManager extends Manager
         }
         return false;
     }
+
+    public function LoginExist($login)
+    {
+        $sql = 'SELECT * FROM User WHERE Login=:login';
+        $reponse = $this->manager->db->prepare( $sql );
+        $reponse->execute( [':login'=>$login] );
+        return $reponse->rowCount();
+    }
+
+    public function CreateUser(User $user)
+    {
+        $sql = 'INSERT INTO User (Login, Password) VALUES (:login,:password)';
+        $reponse = $this->manager->db->prepare( $sql );
+        $reponse->execute(array(':login'=>$user->GetLogin(), ':password'=>$user->GetPassword()));
+        $user->SetId($this->manager->db->lastInsertId());
+        return $user;
+    }
 }
