@@ -2,16 +2,22 @@
 
 namespace ticketing\controller;
 
+use ticketing\model\PriorityManager;
+use ticketing\model\RequestTypeManager;
 use ticketing\model\Ticket;
 use ticketing\model\TicketManager;
 
 class TicketController extends Controller
 {
     private $TicketManager;
+    private $RequestType;
+    private $Priority;
 
     public function __construct( array $params=[] )
     {
         $this->TicketManager = new TicketManager();
+        $this->RequestType = new RequestTypeManager();
+        $this->Priority = new PriorityManager();
         parent::__construct( $params );
     }
 
@@ -20,6 +26,7 @@ class TicketController extends Controller
      */
     public function defaultAction()
     {
+        $this->checkConnexion();
         $data = [];
         $this->render( 'tickets', $data );
     }
@@ -29,7 +36,11 @@ class TicketController extends Controller
      */
     public function createAction()
     {
-        $data = [];
+        $this->checkConnexion();
+        $data = [
+            'requestTypes' => $this->RequestType->GetRequestTypes(),
+            'priorities' => $this->Priority->GetPriorities()
+        ];
         $this->render("createTicket", $data);
     }
 
@@ -38,6 +49,7 @@ class TicketController extends Controller
      */
     public function saveAction()
     {
+        $this->checkConnexion();
         $data = [];
         if( isset( $this->vars['type'] ) && isset( $this->vars['priority'] ) && isset( $this->vars['subject'] ) && 
         isset( $this->vars['message'] )){
@@ -49,6 +61,6 @@ class TicketController extends Controller
             $ticket = new Ticket(['type'=>$type, 'priority'=>$priority, 'subject'=>$subject, 'message'=>$message]);
             //$this->TicketManager->SaveTicket($ticket);
         }
-        $this->render("createTicket", $data);
+        $this->createAction();
     }
 }

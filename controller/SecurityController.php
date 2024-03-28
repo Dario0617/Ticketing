@@ -46,6 +46,7 @@ class SecurityController extends Controller
             $user2 = $this->UserManager->GetUserByLogin($user);
             if($user2){
                 if (sodium_crypto_pwhash_str_verify($user2->GetPassword(), $user->GetPassword())){
+                    $_SESSION['user'] = $user2;
                     new TicketController();
                     die;
                 } else {
@@ -89,6 +90,7 @@ class SecurityController extends Controller
                 SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE);
                 $user->SetPassword($password);
                 $user = $this->UserManager->CreateUser($user);
+                $_SESSION['user'] = $user;
                 new TicketController();
                 die;
             }

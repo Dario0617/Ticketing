@@ -106,4 +106,10 @@ abstract class Controller
         }
     }
 
+    protected function checkConnexion(){
+        if (!isset($_SESSION['user'])){
+            new SecurityController();
+            die;
+        }
+    }
 }

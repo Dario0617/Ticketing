@@ -6,6 +6,16 @@
             <div class="col-8">
                 <h1>Formulaire d'inscription</h1>
             </div>
+            <div class="col-4">
+                <ul class="nav nav-tabs justify-content-end">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ pathRoot ~ 'security/login' }}"><i class="fa-solid fa-circle-user"></i>&nbsp;Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ pathRoot ~ 'security/register' }}"><i class="fa-solid fa-user-plus"></i>&nbsp;Inscription</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
 {% endblock %}
@@ -41,7 +51,7 @@
                             <a href="{{ pathRoot ~ 'security' }}" class="link-info">J'ai déjà un compte</a>
                         </div>
                         <div class="col-sm-4 justify-content-end">
-                            <button type="submit" class="btn btn-primary mb-3"><i class="fa-solid fa-clipboard-check"></i>&nbsp;Inscription</button>
+                            <button type="submit" class="btn btn-primary mb-3"><i class="fa-solid fa-user-plus"></i>&nbsp;Inscription</button>
                         </div>
                     </div>
                 </form>
