@@ -85,7 +85,7 @@ abstract class Controller
     {
         $dataSerialize = base64_encode( serialize( $data ) );
 		$_SESSION['redirect'] = $dataSerialize;
-        header( 'Location: http://ufip5' . $this->pathRoot . $route );
+        header( 'Location: http://51.178.86.117:8117/' . $this->pathRoot . $route );
 		return true;
     }
 

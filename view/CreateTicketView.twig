@@ -37,9 +37,9 @@
 
   <form class="p-1 needs-validation" novalidate name="createTicketForm" method="post" action="{{ pathRoot ~ 'ticket/save' }}">
     <div class="form-group row border p-1 m-0">
-      <label for="requestType" class="col-sm-5 col-form-label font-weight-bold">Type de demande* : </label>
+      <label for="type" class="col-sm-5 col-form-label font-weight-bold">Type de demande* : </label>
       <div class="col-sm-7 border-start">
-        <select class="form-control" id="requestType" required>
+        <select class="form-control" name="type" id="type" required>
           <option value="">-- Choisissez le type de demande --</option>
           {% for requestType in requestTypes %}
             <option value="{{requestType.Id}}">{{requestType.Id}} - {{requestType.Name|raw}}</option>
@@ -50,7 +50,7 @@
     <div class="form-group row border p-1 m-0">
       <label for="priority" class="col-sm-5 col-form-label font-weight-bold">Priorité* :</label>
       <div class="col-sm-7 border-start">
-        <select class="form-control" id="priority" required>
+        <select class="form-control" name="priority" id="priority" required>
           <option value="">-- Choisissez la priorité --</option>
           {% for priority in priorities %}
             <option value="{{priority.Id}}">{{priority.Id}} - {{priority.Name}}</option>
@@ -61,19 +61,19 @@
     <div class="form-group row border p-1 m-0">
       <label for="subject" class="col-sm-5 col-form-label font-weight-bold">Sujet* :</label>
       <div class="col-sm-7 border-start">
-        <input type="text" class="form-control" id="subject" placeholder="Sujet" required>
+        <input type="text" name="subject" class="form-control" id="subject" placeholder="Sujet" required>
       </div>
     </div>
     <div class="form-group row border p-1 m-0">
       <label for="message" class="col-sm-5 col-form-label font-weight-bold">Message* :</label>
       <div class="col-sm-7 border-start">
-        <textarea class="form-control" id="message" placeholder="Message" rows="3" required></textarea>
+        <textarea class="form-control" name="message" id="message" placeholder="Message" rows="3" required></textarea>
       </div>
     </div>
     <div class="form-group row border p-1 m-0">
       <label for="file" class="col-sm-5 col-form-label font-weight-bold">Pièce jointe :</label>
       <div class="col-sm-7 border-start">
-        <input class="form-control" type="file" id="file">
+        <input class="form-control" name="file" type="file" id="file">
       </div>
     </div>
     <div class="form-group row border p-1 m-0">

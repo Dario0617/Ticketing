@@ -12,7 +12,7 @@ if( $data !== null ) {
     $requestParams = $data;
     $isFetched = true;
 } else {
-    $requestParams = $_POST;
+    $requestParams = $_REQUEST;
 }
 
 // App name witch set in namespaces
@@ -35,6 +35,7 @@ $params = [
     'isFetched' => $isFetched,
     'redirect'  => ''
 ];
+
 if( $nbRequest >=1 && !empty( $tabRequest[0] ) ) {
 	// Retrieve controller name
     $controllerName = ucfirst( array_shift( $tabRequest ) );
@@ -52,7 +53,6 @@ if( $nbRequest >=1 && !empty( $tabRequest[0] ) ) {
 } else {
     $controllerName = 'Security';
 }
-
 
 $fileName = 'controller/' . $controllerName . 'Controller.php';
 $className = $appName .'\\controller\\' . $controllerName . 'Controller';

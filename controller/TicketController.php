@@ -57,10 +57,80 @@ class TicketController extends Controller
             $priority = $this->vars["priority"];
             $subject = $this->vars["subject"];
             $message = $this->vars["message"];
-            //$file = $this->vars["file"];
-            $ticket = new Ticket(['type'=>$type, 'priority'=>$priority, 'subject'=>$subject, 'message'=>$message]);
-            //$this->TicketManager->SaveTicket($ticket);
+            $file = $this->vars["file"];
+            $ticket = new Ticket(['type'=>$type, 'priority'=>$priority, 'subject'=>$subject, 'message'=>$message, 
+            'file'=>$file, 'creationDate'=>date("Y-m-d H:i:s"), 'lastModificationDate'=>date("Y-m-d H:i:s")]);
+            $this->TicketManager->CreateTicket($ticket);
         }
-        $this->createAction();
+        //$this->defaultAction();
     }
+
+    /**
+     *  retrieve tickets
+     *
+     * @return void
+     */
+    public function ticketsAction()
+    {
+        $nbTickets = $this->TicketManager->countAll() ?? 0;
+
+        $searchParams = [
+            'search'		=> $this->vars['search'],
+			'sort'			=> $this->vars['sort'],
+			'order'			=> $this->vars['order'],
+			'offset'		=> $this->vars['offset'],
+			'limit'			=> $this->vars['limit'],
+			'searchable'	=> $this->vars['searchable']
+        ];
+        $tickets = $this->TicketManager->GetTickets( $searchParams );
+
+        $dataBs = [];
+        foreach( $tickets as $ticket ) {
+            $dataBs[] = [
+                'id'                    => $ticket->GetId(),
+                'subject'               => $ticket->GetSubject(),
+                'creationDate'          => $ticket->GetCreationDate()->format('d/m/Y H:i:s'),
+                'lastModificationDate'  => $ticket->GetLastModificationDate()->format('d/m/Y H:i:s'),
+                'type'                  => $ticket->GetType(),
+                'priority'              => $ticket->GetPriority()
+            ];
+        }
+
+        $data = [
+            "rows"      => $dataBs,
+            "total"     => $nbTickets
+        ];
+        $jsData = json_encode( $data );
+        echo $jsData;
+    }
+
+    public function editAction()
+	{
+		$data = [
+			'error' => false
+		];
+        if( isset( $this->vars['id'] ) ) {
+            $ticket = $this->TicketManager->GetTicketById( $this->vars['id'] );
+            if( isset( $this->vars['ValidProfilUpdate']) ) {
+                $user->setName(  $this->vars['name'] );
+                $user->setSurname( $this->vars['surname'] );
+
+                $data['id'] = $user->getId();
+                if( $this->usersManager->updateUser( $user ) ) {
+                    $data['message'] = 'Utilidateur a été mise à jour avec succès.';
+                    return $this->redirectToRoute( 'users/detailuser', $data );
+                } else {
+                    $data['error'] = true;
+                    $data['message'] = 'Erreur lors de l\'enregistrement';
+                }
+            } else {
+                return $this->render( 'users/profiluser', ['user'=>$user] );
+            }
+        }
+        return $this->render( 'user/profiluser', [
+            'status'    => 'warning',
+            'message'   => 'Erreur ! Identitiant invalide'
+        ]);
+
+	}
 }
