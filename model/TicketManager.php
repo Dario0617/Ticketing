@@ -8,10 +8,10 @@ class TicketManager extends Manager
     {
         $sql = 'SELECT Ticket.*, RequestType.Name AS Type, Priority.Name AS Priority FROM Ticket 
             INNER JOIN RequestType ON Ticket.RequestTypeId = RequestType.Id 
-            INNER JOIN Priority ON Ticket.PriorityId = Priority.Id WHERE Id=:id';
+            INNER JOIN Priority ON Ticket.PriorityId = Priority.Id WHERE Ticket.Id=:id';
         $reponse = $this->manager->db->prepare( $sql );
         $reponse->execute(array(':id'=>$ticketId));
-        return new User($reponse->fetch(\PDO::FETCH_ASSOC));
+        return new Ticket($reponse->fetch(\PDO::FETCH_ASSOC));
     }
 
     public function GetTickets(array $params)
@@ -23,6 +23,12 @@ class TicketManager extends Manager
         $strLike = false;
         if( !empty( $params['search'] ) && !empty( $params['searchable'] ) ) {
             foreach( $params['searchable'] as $searchItem ) {
+                if ($searchItem == "type"){
+                    $searchItem = "RequestType.Name";
+                }
+                if ($searchItem == "priority"){
+                    $searchItem = "Priority.Name";
+                }
                 $search = $params['search'];
                 $strLike .= $searchItem . " LIKE '%$search%' OR ";
             }
@@ -50,8 +56,9 @@ class TicketManager extends Manager
         $sql = 'INSERT INTO Ticket (RequestTypeId, PriorityId, Subject, Message, File, CreationDate, LastModificationDate)
          VALUES (:requestTypeId, :priorityId, :subject, :message, :file, :creationDate, :lastModificationDate)';
         $reponse = $this->manager->db->prepare( $sql );
-        $reponse->execute(array(':requestTypeId'=>$ticket->GetType(), ':priorityId'=>$ticket->GetPriority(), ':subject'=>$ticket->GetSubject(), 
-        ':message'=>$ticket->GetMessage(), ':file'=>$ticket->GetFile(), ':creationDate'=>$ticket->GetCreationDate(), ':lastModificationDate'=>$ticket->GetLastModificationDate()));
+        $reponse->execute(array(':requestTypeId'=>$ticket->GetType(), ':priorityId'=>$ticket->GetPriority(), 
+        ':subject'=>$ticket->GetSubject(), ':message'=>$ticket->GetMessage(), ':file'=>$ticket->GetFile(), 
+        ':creationDate'=>date("Y-m-d H:i:s"), ':lastModificationDate'=>date("Y-m-d H:i:s")));
         $ticket->SetId($this->manager->db->lastInsertId());
         return $ticket;
     }

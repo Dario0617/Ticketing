@@ -30,62 +30,59 @@
 {% endblock %}
 
 {% block body %}
-<div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px">
-  <div class="row" style="padding: 2%; background-color: #d3d3d352; border-bottom-style: inherit;">
-    <div class="col-sm-12 ">
-      <button class="btn btn-success mr-2" id="btnTicketOuverts"><i class="fa-regular fa-circle-check"></i>&nbsp;Ticket ouverts</button>
-      <button class="btn btn-secondary mr-2" id="btnTicketFermes"><i class="fa-solid fa-x"></i>&nbsp;Ticket fermés</button>
+  {% if alert is defined and message is defined %}
+      <div class="row"><p class="col-10 alert {{alert}}">{{message}}</p></div>
+  {% endif %}
+
+  <div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px">
+    <div class="row" style="padding: 2%; background-color: #d3d3d352; border-bottom-style: inherit;">
+      <div class="col-sm-12 ">
+        <button class="btn btn-success mr-2" id="btnTicketOpened"><i class="fa-solid fa-lock-open"></i>&nbsp;Ticket ouverts</button>
+        <button class="btn btn-secondary mr-2" id="btnTicketClosed"><i class="fa-solid fa-lock"></i>&nbsp;Ticket fermés</button>
+      </div>
+    </div>
+
+    <div style="padding-bottom: 2%" >
+      <table
+        id="table"
+        data-toggle="table" 
+        data-pagination="true" 
+        data-search="true"
+        data-pagination-pre-text="Précédent"
+        data-pagination-next-text="Suivant"
+        data-pagination-v-align="both"
+        data-url="{{ pathRoot ~ 'ticket/tickets' }}"
+        data-ajax="ajaxRequest"
+        data-sortable="true"
+        data-searchable="true"
+        data-page-size="5"
+        data-side-pagination="server">
+        <thead>
+          <tr>
+            <th data-field="id" data-sortable="true" data-searchable="false" data-formatter="idFormatter">N°</th>
+            <th data-field="subject" data-sortable="false" data-searchable="true">Sujet</th>
+            <th data-field="creationDate" data-sortable="true" data-searchable="false">Création</th>
+            <th data-field="lastModificationDate" data-sortable="true" data-searchable="false">Mise à jour</th>
+            <th data-field="type" data-sortable="true" data-searchable="true">Demande</th>
+            <th data-field="priority" data-sortable="true" data-searchable="true">Etat</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <div style="padding-bottom: 2%" >
-    <table
-      id="table"
-      data-toggle="table" 
-      data-pagination="true" 
-      data-search="true"
-      data-pagination-pre-text="Précédent"
-      data-pagination-next-text="Suivant"
-      data-pagination-v-align="both"
-      data-url="{{ pathRoot ~ 'ticket/tickets' }}"
-      data-ajax="ajaxRequest"
-      data-sortable="true"
-      data-searchable="true"
-      data-page-size="5"
-      data-side-pagination="server">
-      <thead>
-        <tr>
-          <th data-field="id" data-sortable="true" data-searchable="false" data-formatter="idFormatter">N°</th>
-          <th data-field="subject" data-sortable="false" data-searchable="true">Sujet</th>
-          <th data-field="creationDate" data-sortable="true" data-searchable="false">Création</th>
-          <th data-field="lastModificationDate" data-sortable="true" data-searchable="false">Mise à jour</th>
-          <th data-field="type" data-sortable="true" data-searchable="false">Demande</th>
-          <th data-field="priority" data-sortable="true" data-searchable="false">Etat</th>
-          <th data-field="action" data-searchable="false" data-sortable="false" data-formatter="actionFormatter">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-  </div>
-</div>
-<script>
-  function ajaxRequest(params) {
-    const url = $('#table').data('url')
-    $.get(url + '/?' + $.param(params.data))
-      .then(function (res) {
-        params.success( JSON.parse(res) )
-      })
-  }
-
-  function actionFormatter(value, row, index) {
-    return '<button class="btn btn-secondary">Action</button>';
-  }
-  
-  function idFormatter(value, row, index) {
-    return '<a class="link-info link-offset-3 link-underline-opacity-0 link-underline-opacity-100-hover" href="{{ pathRoot ~ "ticket/edit/id/" }}' + row.id + '">[#' + row.id + ']</a>';
-  }
-</script>
-
-
+  <script>
+    function ajaxRequest(params) {
+      const url = $('#table').data('url')
+      $.get(url + '/?' + $.param(params.data))
+        .then(function (res) {
+          params.success( JSON.parse(res) )
+        })
+    }
+    
+    function idFormatter(value, row, index) {
+      return '<a class="link-info link-offset-3 link-underline-opacity-0 link-underline-opacity-100-hover" href="{{ pathRoot ~ "ticket/edit/id/" }}' + row.id + '">[#' + row.id + ']</a>';
+    }
+  </script>
 {% endblock %}

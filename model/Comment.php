@@ -5,16 +5,13 @@ namespace ticketing\model;
 use \DateTimeImmutable;
 use \ReflectionMethod;
 
-class Ticket {
+class Comment {
     protected $Id;
-    protected $Priority;
-    protected $Type;
-    protected $Subject;
+    protected $Ticket;
     protected $Message;
     protected $File;
+    protected $User;
     protected $CreationDate;
-    protected $LastModificationDate;
-    protected $Closed;
 
     public function __construct(array $data){
         $this->Hydrate($data);
@@ -29,31 +26,13 @@ class Ticket {
         return $this->Id = $id;
     }
 
-    public function GetPriority()
+    public function GetTicket()
     {
-        return $this->Priority;
+        return $this->Ticket;
     }
-    public function SetPriority($priority)
+    public function SetTicket(Ticket $ticket)
     {
-        return $this->Priority = $priority;
-    }
-
-    public function GetType()
-    {
-        return $this->Type;
-    }
-    public function SetType($type)
-    {
-        return $this->Type = $type;
-    }
-
-    public function GetSubject()
-    {
-        return $this->Subject;
-    }
-    public function SetSubject($subject)
-    {
-        return $this->Subject = $subject;
+        return $this->Ticket = $ticket;
     }
 
     public function GetMessage()
@@ -74,6 +53,15 @@ class Ticket {
         return $this->File = $file;
     }
 
+    public function GetUser()
+    {
+        return $this->User;
+    }
+    public function SetUser(User $user)
+    {
+        return $this->User = $user;
+    }
+
     public function GetCreationDate()
     {
         return $this->CreationDate->format('d/m/Y H:i:s');
@@ -81,24 +69,6 @@ class Ticket {
     public function SetCreationDate(?\DateTimeImmutable $creationDate)
     {
         return $this->CreationDate = $creationDate;
-    }
-
-    public function GetLastModificationDate()
-    {
-        return $this->LastModificationDate->format('d/m/Y H:i:s');
-    }
-    public function SetLastModificationDate(?\DateTimeImmutable $lastModificationDate)
-    {
-        return $this->LastModificationDate = $lastModificationDate;
-    }
-
-    public function GetClosed()
-    {
-        return $this->Closed;
-    }
-    public function SetClosed($closed)
-    {
-        return $this->Closed = $closed;
     }
 
     /**

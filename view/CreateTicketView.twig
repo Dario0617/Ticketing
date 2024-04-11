@@ -30,57 +30,69 @@
 {% endblock %}
 
 {% block body %}
-<div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px">
-  <div class="row p-3" style="background-color: #d3d3d352; border-bottom-style: inherit;">
-      <h4 class="m-0">NOUVEAU TICKET</h4>
-  </div>
+  {% if alert is defined and message is defined %}
+      <div class="row"><p class="col-10 alert {{alert}}">{{message}}</p></div>
+  {% endif %}
 
-  <form class="p-1 needs-validation" novalidate name="createTicketForm" method="post" action="{{ pathRoot ~ 'ticket/save' }}">
-    <div class="form-group row border p-1 m-0">
-      <label for="type" class="col-sm-5 col-form-label font-weight-bold">Type de demande* : </label>
-      <div class="col-sm-7 border-start">
-        <select class="form-control" name="type" id="type" required>
-          <option value="">-- Choisissez le type de demande --</option>
-          {% for requestType in requestTypes %}
-            <option value="{{requestType.Id}}">{{requestType.Id}} - {{requestType.Name|raw}}</option>
-          {% endfor %}
-        </select>
-      </div>
+  <div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px">
+    <div class="row p-3" style="background-color: #d3d3d352; border-bottom-style: inherit;">
+        <h4 class="m-0">NOUVEAU TICKET</h4>
     </div>
-    <div class="form-group row border p-1 m-0">
-      <label for="priority" class="col-sm-5 col-form-label font-weight-bold">Priorité* :</label>
-      <div class="col-sm-7 border-start">
-        <select class="form-control" name="priority" id="priority" required>
-          <option value="">-- Choisissez la priorité --</option>
-          {% for priority in priorities %}
-            <option value="{{priority.Id}}">{{priority.Id}} - {{priority.Name}}</option>
-          {% endfor %}
-        </select>
+
+    <form class="p-1 needs-validation" enctype="multipart/form-data" novalidate name="createTicketForm" method="post" action="{{ pathRoot ~ 'ticket/save' }}">
+      <div class="form-group row border p-1 m-0">
+        <label for="type" class="col-sm-5 col-form-label fw-bold">Type de demande* : </label>
+        <div class="col-sm-7 border-start">
+          <select class="form-control" name="type" id="type" required>
+            <option value="">-- Choisissez le type de demande --</option>
+            {% for requestType in requestTypes %}
+              {% set selected = '' %}
+              {% if typeSelected is defined and typeSelected == requestType.Id %}
+                {% set selected = 'selected' %}
+              {% endif %}
+              <option value="{{requestType.Id}}" {{selected}}>{{requestType.Id}} - {{requestType.Name|raw}}</option>
+            {% endfor %}
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="form-group row border p-1 m-0">
-      <label for="subject" class="col-sm-5 col-form-label font-weight-bold">Sujet* :</label>
-      <div class="col-sm-7 border-start">
-        <input type="text" name="subject" class="form-control" id="subject" placeholder="Sujet" required>
+      <div class="form-group row border p-1 m-0">
+        <label for="priority" class="col-sm-5 col-form-label fw-bold">Priorité* :</label>
+        <div class="col-sm-7 border-start">
+          <select class="form-control" name="priority" id="priority" required>
+            <option value="">-- Choisissez la priorité --</option>
+            {% for priority in priorities %}
+              {% set selected = '' %}
+              {% if prioritySelected is defined and prioritySelected == priority.Id %}
+                {% set selected = 'selected' %}
+              {% endif %}
+              <option value="{{priority.Id}}" {{selected}}>{{priority.Id}} - {{priority.Name}}</option>
+            {% endfor %}
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="form-group row border p-1 m-0">
-      <label for="message" class="col-sm-5 col-form-label font-weight-bold">Message* :</label>
-      <div class="col-sm-7 border-start">
-        <textarea class="form-control" name="message" id="message" placeholder="Message" rows="3" required></textarea>
+      <div class="form-group row border p-1 m-0">
+        <label for="subject" class="col-sm-5 col-form-label fw-bold">Sujet* :</label>
+        <div class="col-sm-7 border-start">
+          <input type="text" value="{{ subject is defined ? subject : "" }}" name="subject" class="form-control" id="subject" placeholder="Sujet" required>
+        </div>
       </div>
-    </div>
-    <div class="form-group row border p-1 m-0">
-      <label for="file" class="col-sm-5 col-form-label font-weight-bold">Pièce jointe :</label>
-      <div class="col-sm-7 border-start">
-        <input class="form-control" name="file" type="file" id="file">
+      <div class="form-group row border p-1 m-0">
+        <label for="message" class="col-sm-5 col-form-label fw-bold">Message* :</label>
+        <div class="col-sm-7 border-start">
+          <textarea class="form-control" name="message" id="message" placeholder="Message" rows="3" required>{{ messageInput is defined ? messageInput : "" }}</textarea>
+        </div>
       </div>
-    </div>
-    <div class="form-group row border p-1 m-0">
-      <div class="col-sm-2">
-        <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-plus"></i>&nbsp;Créer le ticket</button>
+      <div class="form-group row border p-1 m-0">
+        <label for="file" class="col-sm-5 col-form-label fw-bold">Pièce jointe :</label>
+        <div class="col-sm-7 border-start">
+          <input class="form-control" name="file" type="file" id="file">
+        </div>
       </div>
-    </div>
-  </form>
-</div>
+      <div class="form-group row border p-1 m-0">
+        <div class="col-sm-2">
+          <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-plus"></i>&nbsp;Créer le ticket</button>
+        </div>
+      </div>
+    </form>
+  </div>
 {% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'Pagelayout.twig' %}
+
+{% block header %}
+    <header>
+        <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
+            <div class="col-7">
+                <h1>Ticket [#{{ ticket.Id }}]</h1>
+            </div>
+            <div class="col-5">
+              <ul class="nav nav-tabs justify-content-end">
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ pathRoot ~ 'ticket' }}">
+                        <i class="fa-solid fa-table-list"></i>&nbsp;Listes des tickets
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ pathRoot ~ 'ticket/create' }}">
+                        <i class="fa-solid fa-ticket"></i>&nbsp;Créer un ticket
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" style="color:red" href="{{ pathRoot ~ 'security/logout' }}">
+                      <i class="fa-solid fa-door-open"></i>&nbsp;Déconnexion
+                    </a>
+                </li>
+              </ul>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+  {% if alert is defined and message is defined %}
+      <div class="row"><p class="col-10 alert {{alert}}">{{message}}</p></div>
+  {% endif %}
+
+  <div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px;margin-bottom: 2%;">
+    <div class="row" style="padding: 2%; background-color: #d3d3d352; border-bottom-style: inherit;">
+      <div class="col-sm-10">
+        <p class="m-0 h5" style="padding-top: 1%;">TICKET [#{{ticket.Id}}] CRÉÉ LE {{ticket.CreationDate}} - DERNIER MISE À JOUR LE {{ticket.LastModificationDate}}</p>
+      </div>
+      <div class="col-sm-2">
+        <button class="btn btn-danger mr-2" id="btnCloseTicket"><i class="fa-solid fa-lock"></i>&nbsp;Clôturer le ticket</button>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0" style="margin-top: 1% !important;">
+      <label for="type" class="col-sm-2 col-form-label fw-bold">Sujet : </label>
+      <div class="col-sm-10">
+        <p class="col-form-label">{{ticket.Subject}}</p>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="type" class="col-sm-2 col-form-label fw-bold">Priorité : </label>
+      <div class="col-sm-10">
+        <p class="col-form-label">{{ticket.Priority}}</p>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="type" class="col-sm-2 col-form-label fw-bold">Demande : </label>
+      <div class="col-sm-10">
+        <p class="col-form-label">{{ticket.Type}}</p>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="type" class="col-sm-2 col-form-label fw-bold">Status : </label>
+      <div class="col-sm-10">
+        <p class="col-form-label">{{ticket.Closed ? "Clôturer" : "En cours"}}</p>
+      </div>
+    </div>
+    <div class="form-group row border p-1 m-0">
+      <label for="type" class="col-sm-2 col-form-label fw-bold">Description : </label>
+      <div class="col-sm-10">
+        <p class="col-form-label text-wrap">{{ticket.Message}}</p>
+        {% if ticket.File %}
+          <img src="http://51.178.86.117:8117/PPE/Ticketing/public/file/{{ticket.File}}" style="height: 100px;"/>
+        {% endif %}
+      </div>
+    </div>
+    <hr>
+    {% for comment in comments %}
+    <div class="form-group row border p-1 m-0">
+      <label for="type" class="col-sm-4 col-form-label fw-bold">Note du {{comment.CreationDate}}<br> par {{comment.User.Login}}</label>
+      <div class="col-sm-8">
+        <p class="col-form-label text-wrap">{{comment.Message}}</p>
+        {% if comment.File %}
+          <img src="http://51.178.86.117:8117/PPE/Ticketing/public/file/{{comment.File}}" style="height: 100px;"/>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    {% if ticket.Closed == false %}
+      <form class="needs-validation" enctype="multipart/form-data" novalidate name="createCommentForm" method="post" action="{{ pathRoot ~ 'comment/save/ticketId/' ~ ticket.Id }}">
+        <div class="form-group row border p-1 m-0">
+          <label for="message" class="col-sm-3 col-form-label fw-bold">Message* :</label>
+          <div class="col-sm-9">
+            <textarea class="form-control" name="message" id="message" placeholder="Message" rows="3" required>{{ messageInput is defined ? messageInput : "" }}</textarea>
+          </div>
+        </div>
+        <div class="form-group row border p-1 m-0">
+          <label for="file" class="col-sm-3 col-form-label fw-bold">Pièce jointe :</label>
+          <div class="col-sm-9">
+            <input class="form-control" name="file" type="file" id="file">
+          </div>
+        </div>
+        <div class="form-group row border p-1 m-0" style="margin-bottom: 1% !important;">
+          <div class="col-sm-2">
+            <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-reply"></i>&nbsp;Répondre</button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}

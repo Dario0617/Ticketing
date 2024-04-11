@@ -6,18 +6,21 @@ use ticketing\model\PriorityManager;
 use ticketing\model\RequestTypeManager;
 use ticketing\model\Ticket;
 use ticketing\model\TicketManager;
+use ticketing\model\CommentManager;
 
 class TicketController extends Controller
 {
     private $TicketManager;
-    private $RequestType;
-    private $Priority;
+    private $RequestTypeManager;
+    private $PriorityManager;
+    private $CommentManager;
 
     public function __construct( array $params=[] )
     {
         $this->TicketManager = new TicketManager();
-        $this->RequestType = new RequestTypeManager();
-        $this->Priority = new PriorityManager();
+        $this->RequestTypeManager = new RequestTypeManager();
+        $this->PriorityManager = new PriorityManager();
+        $this->CommentManager = new CommentManager();
         parent::__construct( $params );
     }
 
@@ -34,13 +37,11 @@ class TicketController extends Controller
     /**
      *  load createTicketView
      */
-    public function createAction()
+    public function createAction(array $data=[])
     {
         $this->checkConnexion();
-        $data = [
-            'requestTypes' => $this->RequestType->GetRequestTypes(),
-            'priorities' => $this->Priority->GetPriorities()
-        ];
+        $data['requestTypes'] = $this->RequestTypeManager->GetRequestTypes();
+        $data['priorities'] = $this->PriorityManager->GetPriorities();
         $this->render("createTicket", $data);
     }
 
@@ -50,19 +51,64 @@ class TicketController extends Controller
     public function saveAction()
     {
         $this->checkConnexion();
-        $data = [];
-        if( isset( $this->vars['type'] ) && isset( $this->vars['priority'] ) && isset( $this->vars['subject'] ) && 
-        isset( $this->vars['message'] )){
+        $data['alert'] = 'alert-danger';
+        $data['message'] = "Erreur : Tous les champs obligatoires ne sont pas remplis";
+        if( isset( $this->vars['type'] ) && $this->vars['type'] != "" 
+        && isset( $this->vars['priority'] ) && $this->vars['priority'] != ""
+        && isset( $this->vars['subject'] ) && $this->vars['subject'] != "" 
+        && isset( $this->vars['message'] ) && $this->vars['message'] != "" ){
             $type = $this->vars["type"];
             $priority = $this->vars["priority"];
             $subject = $this->vars["subject"];
             $message = $this->vars["message"];
-            $file = $this->vars["file"];
+            $nameFile = "";
+            if (isset($_FILES["file"]) && $_FILES["file"]["name"] != "")
+            {
+                if ($_FILES["file"]["error"] == 0)
+                {
+                    if ($_FILES["file"]["size"] <= 1000000)
+                    {
+                        $infosFichier = pathinfo($_FILES["file"]["name"]);
+                        $extensionUpload = $infosFichier["extension"];
+                        $extensionsAutorisees = array("jpg", "jpeg", "gif", "png");
+                        if (in_array($extensionUpload, $extensionsAutorisees))
+                        {
+                            move_uploaded_file($_FILES["file"]["tmp_name"], "file/" . basename($_FILES["file"]["name"]));
+                            $nameFile = $_FILES["file"]["name"];
+                        }
+                        else
+                        {
+                            $data['alert'] = 'alert-warning';
+                            $data['message'] = "L'extension du fichier doit être jpg/jpeg/gif/png";
+                            return $this->createAction($data);
+                        }
+                    }
+                    else
+                    {
+                        $data['alert'] = 'alert-warning';
+                        $data['message'] = "Votre fichier doit être inférieur a 1Mo";
+                        return $this->createAction($data);
+                    }
+                } 
+                else
+                {
+                    $data['alert'] = 'alert-danger';
+                    $data['message'] = "Erreur : Lors de l'envoie du fichier";
+                    return $this->createAction($data);
+                }
+            }            
             $ticket = new Ticket(['type'=>$type, 'priority'=>$priority, 'subject'=>$subject, 'message'=>$message, 
-            'file'=>$file, 'creationDate'=>date("Y-m-d H:i:s"), 'lastModificationDate'=>date("Y-m-d H:i:s")]);
+            'file'=>$nameFile, 'creationDate'=>date("Y-m-d H:i:s"), 'lastModificationDate'=>date("Y-m-d H:i:s")]);
             $this->TicketManager->CreateTicket($ticket);
+            $data['alert'] = 'alert-success';
+            $data['message'] = "Le ticket a été créé avec succès";
+            return $this->createAction($data);
         }
-        //$this->defaultAction();
+        $data['typeSelected'] = $this->vars['type'];
+        $data['prioritySelected'] = $this->vars['priority'];
+        $data['subject'] = $this->vars['subject'];
+        $data['messageInput'] = $this->vars['message'];
+        return $this->createAction($data);
     }
 
     /**
@@ -89,8 +135,8 @@ class TicketController extends Controller
             $dataBs[] = [
                 'id'                    => $ticket->GetId(),
                 'subject'               => $ticket->GetSubject(),
-                'creationDate'          => $ticket->GetCreationDate()->format('d/m/Y H:i:s'),
-                'lastModificationDate'  => $ticket->GetLastModificationDate()->format('d/m/Y H:i:s'),
+                'creationDate'          => $ticket->GetCreationDate(),
+                'lastModificationDate'  => $ticket->GetLastModificationDate(),
                 'type'                  => $ticket->GetType(),
                 'priority'              => $ticket->GetPriority()
             ];
@@ -106,31 +152,24 @@ class TicketController extends Controller
 
     public function editAction()
 	{
-		$data = [
-			'error' => false
-		];
+        $this->checkConnexion();
+        if (isset( $this->vars['alert'] ) && isset( $this->vars['message'] )){
+            $data['alert'] = $this->vars['alert'];
+            $data['message'] = $this->vars['message'];
+        }
         if( isset( $this->vars['id'] ) ) {
             $ticket = $this->TicketManager->GetTicketById( $this->vars['id'] );
-            if( isset( $this->vars['ValidProfilUpdate']) ) {
-                $user->setName(  $this->vars['name'] );
-                $user->setSurname( $this->vars['surname'] );
-
-                $data['id'] = $user->getId();
-                if( $this->usersManager->updateUser( $user ) ) {
-                    $data['message'] = 'Utilidateur a été mise à jour avec succès.';
-                    return $this->redirectToRoute( 'users/detailuser', $data );
-                } else {
-                    $data['error'] = true;
-                    $data['message'] = 'Erreur lors de l\'enregistrement';
-                }
-            } else {
-                return $this->render( 'users/profiluser', ['user'=>$user] );
+            if (isset($ticket)){
+                $comments = $this->CommentManager->GetComments($ticket->GetId());
+                $data['ticket'] = $ticket;
+                $data['comments'] = $comments;
+                return $this->render('editTicket', $data);
             }
+            $data['alert'] = 'alert-danger';
+            $data['message'] = "Erreur : Identifiant non reconnu";
         }
-        return $this->render( 'user/profiluser', [
-            'status'    => 'warning',
-            'message'   => 'Erreur ! Identitiant invalide'
-        ]);
-
+        $data['alert'] = 'alert-warning';
+        $data['message'] = "Attention : Aucun identifiant trouvé";
+        return $this->render( 'tickets', $data);
 	}
 }
