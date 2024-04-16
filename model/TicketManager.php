@@ -40,6 +40,21 @@ class TicketManager extends Manager
         if( $strLike ) {
             $sql .= " WHERE $strLike";
         }
+        if ($params['onlyClosed']){
+            $sqlClosed = "Ticket.Closed = 1";
+            if( $strLike ) {
+                $sql .= " AND " . $sqlClosed;
+            }else{
+                $sql .= " WHERE " . $sqlClosed;
+            }
+        } elseif ($params['onlyOpened']){
+            $sqlClosed = "Ticket.Closed = 0";
+            if( $strLike ) {
+                $sql .= " AND " . $sqlClosed;
+            }else{
+                $sql .= " WHERE " . $sqlClosed;
+            }
+        }
         $sql .= " ORDER BY $sort $order";
         $sql .= " LIMIT $offset, $limit";
         $response = $this->manager->db->query( $sql );
@@ -51,8 +66,14 @@ class TicketManager extends Manager
         return $tickets;
     }
 
+    /**
+     * Create ticket
+     *
+     * @return Ticket
+     */
     public function CreateTicket(Ticket $ticket)
     {
+        date_default_timezone_set('Europe/Paris');
         $sql = 'INSERT INTO Ticket (RequestTypeId, PriorityId, Subject, Message, File, CreationDate, LastModificationDate)
          VALUES (:requestTypeId, :priorityId, :subject, :message, :file, :creationDate, :lastModificationDate)';
         $reponse = $this->manager->db->prepare( $sql );
@@ -68,11 +89,28 @@ class TicketManager extends Manager
      *
      * @return integer
      */
-    public function countAll()
+    public function countAll(array $params)
     {
         $sql = "SELECT count(*) FROM Ticket";
+        if ($params['onlyClosed']){
+            $sql .= " WHERE Ticket.Closed = 1";
+        } elseif ($params['onlyOpened']){
+            $sql .= " WHERE Ticket.Closed = 0";
+        }
         $response = $this->manager->db->query( $sql );
         $nbTickets = $response->fetch();
         return $nbTickets[0];
+    }
+
+    /**
+     * Update ticket
+     */
+    public function UpdateTicket(Ticket $ticket)
+    {
+        date_default_timezone_set('Europe/Paris');
+        $sql = 'UPDATE Ticket SET LastModificationDate = :lastModificationDate, Closed = :closed WHERE Id = :id';
+        $reponse = $this->manager->db->prepare( $sql );
+        return $reponse->execute(array(':lastModificationDate'=>date("Y-m-d H:i:s"), ':closed'=>$ticket->GetClosed(), 
+        ':id'=>$ticket->GetId()));
     }
 }

@@ -37,8 +37,14 @@
   <div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px">
     <div class="row" style="padding: 2%; background-color: #d3d3d352; border-bottom-style: inherit;">
       <div class="col-sm-12 ">
-        <button class="btn btn-success mr-2" id="btnTicketOpened"><i class="fa-solid fa-lock-open"></i>&nbsp;Ticket ouverts</button>
-        <button class="btn btn-secondary mr-2" id="btnTicketClosed"><i class="fa-solid fa-lock"></i>&nbsp;Ticket fermés</button>
+        <button class="btn btn-success mr-2" id="btnTicketOpened" 
+        data-url="{{ pathRoot ~ 'ticket/tickets' }}"
+        data-field="isnotclosed"
+        data-val="0"><i class="fa-solid fa-lock-open"></i>&nbsp;Tickets ouverts</button>
+        <button class="btn btn-secondary mr-2" id="btnTicketClosed" 
+        data-url="{{ pathRoot ~ 'ticket/tickets' }}"
+        data-field="isclose"
+        data-val="0"><i class="fa-solid fa-lock"></i>&nbsp;Tickets clôturés</button>
       </div>
     </div>
 
@@ -56,7 +62,8 @@
         data-sortable="true"
         data-searchable="true"
         data-page-size="5"
-        data-side-pagination="server">
+        data-side-pagination="server"
+        data-query-params="queryParams">
         <thead>
           <tr>
             <th data-field="id" data-sortable="true" data-searchable="false" data-formatter="idFormatter">N°</th>
@@ -64,7 +71,8 @@
             <th data-field="creationDate" data-sortable="true" data-searchable="false">Création</th>
             <th data-field="lastModificationDate" data-sortable="true" data-searchable="false">Mise à jour</th>
             <th data-field="type" data-sortable="true" data-searchable="true">Demande</th>
-            <th data-field="priority" data-sortable="true" data-searchable="true">Etat</th>
+            <th data-field="priority" data-sortable="true" data-searchable="true">Priorité</th>
+            <th data-field="closed" data-sortable="true" data-searchable="false">Clôturé</th>
           </tr>
         </thead>
         <tbody>
@@ -78,6 +86,26 @@
       $.get(url + '/?' + $.param(params.data))
         .then(function (res) {
           params.success( JSON.parse(res) )
+        })
+    }
+
+    function queryParams( params ) {
+            params.isclose = document.querySelector('#btnTicketClosed').dataset.val
+            params.isnotclose = document.querySelector('#btnTicketOpened').dataset.val
+            document.querySelector('#btnTicketClosed').dataset.val = 0
+            document.querySelector('#btnTicketOpened').dataset.val = 0
+            return params
+    }
+
+    window.onload = () => {
+        const allBtn = document.querySelectorAll(".btn")
+
+        allBtn.forEach( function(btn) {
+            btn.addEventListener('click', (e)=>{
+                const elem = e.target
+                elem.dataset.val = 1
+                $('#table').bootstrapTable('refresh')
+            })
         })
     }
     

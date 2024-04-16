@@ -6,6 +6,7 @@ class CommentManager extends Manager
 {
     public function CreateComment(Comment $comment)
     {
+        date_default_timezone_set('Europe/Paris');
         $sql = 'INSERT INTO Comment (TicketId, Message, File, UserId, CreationDate) 
         VALUES (:ticketId, :message, :file, :userId, :creationDate)';
         $reponse = $this->manager->db->prepare( $sql );

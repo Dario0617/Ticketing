@@ -50,6 +50,7 @@ class TicketController extends Controller
      */
     public function saveAction()
     {
+        date_default_timezone_set('Europe/Paris');
         $this->checkConnexion();
         $data['alert'] = 'alert-danger';
         $data['message'] = "Erreur : Tous les champs obligatoires ne sont pas remplis";
@@ -112,23 +113,45 @@ class TicketController extends Controller
     }
 
     /**
+     *  Close Ticket
+     */
+    public function updateAction()
+    {
+        $this->checkConnexion();
+        if( isset( $this->vars['id'] ) && $this->vars['id'] != ""
+        && isset( $this->vars['close'] ) && $this->vars['close'] != ""){
+            $ticket = new Ticket(['closed'=>$this->vars['close'], 'id'=>$this->vars['id']]);
+            $this->TicketManager->UpdateTicket($ticket);
+            $data['alert'] = 'alert-success';
+            if ($this->vars['close']){
+                $data['message'] = "Le ticket a été clôturé avec succès";
+            } else{
+                $data['message'] = "Le ticket a été réouvert avec succès";
+            }
+        }
+        return $this->redirectToRoute('ticket/edit/id/'.$this->vars['id'], $data);
+    }
+
+    /**
      *  retrieve tickets
      *
      * @return void
      */
     public function ticketsAction()
     {
-        $nbTickets = $this->TicketManager->countAll() ?? 0;
-
         $searchParams = [
             'search'		=> $this->vars['search'],
 			'sort'			=> $this->vars['sort'],
 			'order'			=> $this->vars['order'],
 			'offset'		=> $this->vars['offset'],
 			'limit'			=> $this->vars['limit'],
-			'searchable'	=> $this->vars['searchable']
+			'searchable'	=> $this->vars['searchable'],
+            'onlyClosed'    => $this->vars['isclose'] == 1,
+            'onlyOpened'     => $this->vars['isnotclose'] == 1
         ];
-        $tickets = $this->TicketManager->GetTickets( $searchParams );
+
+        $nbTickets = $this->TicketManager->countAll($searchParams) ?? 0;
+        $tickets = $this->TicketManager->GetTickets($searchParams );
 
         $dataBs = [];
         foreach( $tickets as $ticket ) {
@@ -138,7 +161,8 @@ class TicketController extends Controller
                 'creationDate'          => $ticket->GetCreationDate(),
                 'lastModificationDate'  => $ticket->GetLastModificationDate(),
                 'type'                  => $ticket->GetType(),
-                'priority'              => $ticket->GetPriority()
+                'priority'              => $ticket->GetPriority(),
+                'closed'                => $ticket->GetClosed() ? "Oui" : "Non"
             ];
         }
 

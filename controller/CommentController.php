@@ -5,15 +5,18 @@ namespace ticketing\controller;
 use ticketing\model\Comment;
 use ticketing\model\CommentManager;
 use ticketing\model\Ticket;
+use ticketing\model\TicketManager;
 use ticketing\model\User;
 
 class CommentController extends Controller
 {
     private $CommentManager;
+    private $TicketManager;
 
     public function __construct( array $params=[] )
     {
         $this->CommentManager = new CommentManager();
+        $this->TicketManager = new TicketManager();
         parent::__construct( $params );
     }
 
@@ -32,6 +35,7 @@ class CommentController extends Controller
      */
     public function saveAction()
     {
+        date_default_timezone_set('Europe/Paris');
         $this->checkConnexion();
         $data['alert'] = 'alert-danger';
         $data['message'] = "Erreur : Tous les champs obligatoires ne sont pas remplis";
@@ -79,6 +83,8 @@ class CommentController extends Controller
             $comment = new Comment(['message'=>$message, 'file'=>$nameFile, 'ticket'=>$ticket, 'user'=>$user,
             'creationDate'=>date("Y-m-d H:i:s")]);
             $this->CommentManager->CreateComment($comment);
+            $ticket = $this->TicketManager->GetTicketById($ticket->GetId());
+            $this->TicketManager->UpdateTicket($ticket);
             $data['alert'] = 'alert-success';
             $data['message'] = "Le commentaire a été créé avec succès";
         }

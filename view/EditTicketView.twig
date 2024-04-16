@@ -39,9 +39,15 @@
       <div class="col-sm-10">
         <p class="m-0 h5" style="padding-top: 1%;">TICKET [#{{ticket.Id}}] CRÉÉ LE {{ticket.CreationDate}} - DERNIER MISE À JOUR LE {{ticket.LastModificationDate}}</p>
       </div>
-      <div class="col-sm-2">
-        <button class="btn btn-danger mr-2" id="btnCloseTicket"><i class="fa-solid fa-lock"></i>&nbsp;Clôturer le ticket</button>
-      </div>
+      {% if ticket.Closed %}
+        <div class="col-sm-2">
+          <a class="btn btn-success mr-2" href="{{ pathRoot ~ 'ticket/update/id/' ~ ticket.Id ~ '/close/0' }}"><i class="fa-solid fa-lock-open"></i>&nbsp;Réouverture du ticket</a>
+        </div>
+      {% else %}
+        <div class="col-sm-2">
+          <a class="btn btn-danger mr-2" href="{{ pathRoot ~ 'ticket/update/id/' ~ ticket.Id ~ '/close/1' }}"><i class="fa-solid fa-lock"></i>&nbsp;Clôturer le ticket</a>
+        </div>
+      {% endif %}
     </div>
     <div class="form-group row border p-1 m-0" style="margin-top: 1% !important;">
       <label for="type" class="col-sm-2 col-form-label fw-bold">Sujet : </label>
@@ -64,7 +70,7 @@
     <div class="form-group row border p-1 m-0">
       <label for="type" class="col-sm-2 col-form-label fw-bold">Status : </label>
       <div class="col-sm-10">
-        <p class="col-form-label">{{ticket.Closed ? "Clôturer" : "En cours"}}</p>
+        <p class="col-form-label">{{ticket.Closed ? "Clôturé" : "En cours"}}</p>
       </div>
     </div>
     <div class="form-group row border p-1 m-0">
