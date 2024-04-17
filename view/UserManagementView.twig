@@ -1,0 +1,97 @@
+{% extends 'Pagelayout.twig' %}
+
+{% block header %}
+    <header>
+        <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
+            <div class="col-5">
+                <h1>Liste des Utilisateurs</h1>
+            </div>
+            <div class="col-7">
+              <ul class="nav nav-tabs justify-content-end">
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ pathRoot ~ 'ticket' }}">
+                        <i class="fa-solid fa-table-list"></i>&nbsp;Listes des tickets
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ pathRoot ~ 'ticket/create' }}">
+                        <i class="fa-solid fa-ticket"></i>&nbsp;Créer un ticket
+                      </a>
+                  </li>
+                  {% if session is defined and session.user.Admin %}
+                    <li class="nav-item">
+                      <a class="nav-link active" href="{{ pathRoot ~ 'user' }}">
+                        <i class='fa-solid fa-users-gear'></i>&nbsp;Gestion des utilisateurs
+                      </a>
+                    </li>
+                  {% endif %}
+                  <li class="nav-item">
+                    <a class="nav-link" style="color:red" href="{{ pathRoot ~ 'security/logout' }}">
+                      <i class="fa-solid fa-door-open"></i>&nbsp;Déconnexion
+                    </a>
+                </li>
+              </ul>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+  {% if alert is defined and message is defined %}
+      <div class="row"><p class="col-10 alert {{alert}}">{{message}}</p></div>
+  {% endif %}
+
+  <div class="container" style="border-style: ridge; border-width: thick; border-color: #e0e0e0; border-radius: 20px">
+    <div style="padding-bottom: 2%" >
+      <table
+        id="table"
+        data-toggle="table" 
+        data-pagination="true" 
+        data-search="true"
+        data-pagination-pre-text="Précédent"
+        data-pagination-next-text="Suivant"
+        data-pagination-v-align="both"
+        data-url="{{ pathRoot ~ 'user/users' }}"
+        data-ajax="ajaxRequest"
+        data-sortable="true"
+        data-searchable="true"
+        data-page-size="5"
+        data-side-pagination="server">
+        <thead>
+          <tr>
+            <th data-field="id" data-sortable="true" data-searchable="true">Id</th>
+            <th data-field="admin" data-sortable="true" data-searchable="false" data-formatter="roleFormatter">Role</th>
+            <th data-field="login" data-sortable="true" data-searchable="true">Login</th>
+            <th data-field="action" data-sortable="false" data-searchable="false" data-formatter="actionFormatter">#</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    function ajaxRequest(params) {
+      const url = $('#table').data('url')
+      $.get(url + '/?' + $.param(params.data))
+        .then(function (res) {
+          params.success( JSON.parse(res) )
+        })
+    }
+
+    function roleFormatter(value, row, index) {
+      if (row.admin == 1){
+        return "Admin"
+      }
+      return "Client"
+    }
+
+    function actionFormatter(value, row, index) {
+      var deleteButton = '<a type="button" class="btn btn-outline-danger btn-sm" href="{{ pathRoot }}user/delete/id/'+row.id+'"><i class="fa-solid fa-trash-can"></i></a>';
+      if (row.admin == 1){
+        return '<a type="button" class="btn btn-outline-primary btn-sm" href="{{ pathRoot }}user/update/id/'+row.id+'/admin/0"><i class="fa-solid fa-user"></i>&nbsp;Passer au rôle "Client"</a>&nbsp;&nbsp;' + deleteButton
+      }
+      return '<a type="button" class="btn btn-outline-primary btn-sm" href="{{ pathRoot }}user/update/id/'+row.id+'/admin/1"><i class="fa-solid fa-user-shield"></i>&nbsp;Passer au rôle "Admin"</a>&nbsp;&nbsp;' + deleteButton
+    }
+  </script>
+{% endblock %}

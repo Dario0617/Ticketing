@@ -33,6 +33,7 @@ abstract class Controller
             'debug' => true
         ]);
         $this->twig->addGlobal('pathRoot', $this->pathRoot );
+        $this->twig->addGlobal('session', $_SESSION );
         $this->twig->addExtension(new DebugExtension());
 
         // Call action

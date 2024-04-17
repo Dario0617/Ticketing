@@ -3,10 +3,10 @@
 {% block header %}
     <header>
         <div class="row" style="margin-top: 1%; margin-bottom: 1%; margin-left: 0%; margin-right: 0%; padding-left: 1%; padding-right: 1%;">
-            <div class="col-7">
+            <div class="col-5">
                 <h1>Création d'un ticket</h1>
             </div>
-            <div class="col-5">
+            <div class="col-7">
               <ul class="nav nav-tabs justify-content-end">
                   <li class="nav-item">
                       <a class="nav-link" href="{{ pathRoot ~ 'ticket' }}">
@@ -18,6 +18,13 @@
                         <i class="fa-solid fa-ticket"></i>&nbsp;Créer un ticket
                       </a>
                   </li>
+                  {% if session is defined and session.user.Admin %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ pathRoot ~ 'user' }}">
+                        <i class='fa-solid fa-users-gear'></i>&nbsp;Gestion des utilisateurs
+                      </a>
+                    </li>
+                  {% endif %}
                   <li class="nav-item">
                     <a class="nav-link" style="color:red" href="{{ pathRoot ~ 'security/logout' }}">
                       <i class="fa-solid fa-door-open"></i>&nbsp;Déconnexion

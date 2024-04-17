@@ -89,7 +89,7 @@ class TicketManager extends Manager
      *
      * @return integer
      */
-    public function countAll(array $params)
+    public function CountAll(array $params)
     {
         $sql = "SELECT count(*) FROM Ticket";
         if ($params['onlyClosed']){

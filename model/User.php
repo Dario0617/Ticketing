@@ -6,6 +6,7 @@ class User {
     private $Id;
     private $Login;
     private $Password;
+    private $Admin;
 
     public function __construct(array $data){
         $this->Hydrate($data);
@@ -36,6 +37,15 @@ class User {
     public function SetPassword($password)
     {
         return $this->Password = $password;
+    }
+
+    public function GetAdmin()
+    {
+        return $this->Admin;
+    }
+    public function SetAdmin($admin)
+    {
+        return $this->Admin = $admin;
     }
 
     public function Hydrate(array $data){

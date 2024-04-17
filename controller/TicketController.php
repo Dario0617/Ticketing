@@ -113,7 +113,7 @@ class TicketController extends Controller
     }
 
     /**
-     *  Close Ticket
+     *  Update Ticket
      */
     public function updateAction()
     {
@@ -134,8 +134,6 @@ class TicketController extends Controller
 
     /**
      *  retrieve tickets
-     *
-     * @return void
      */
     public function ticketsAction()
     {
@@ -150,7 +148,7 @@ class TicketController extends Controller
             'onlyOpened'     => $this->vars['isnotclose'] == 1
         ];
 
-        $nbTickets = $this->TicketManager->countAll($searchParams) ?? 0;
+        $nbTickets = $this->TicketManager->CountAll($searchParams) ?? 0;
         $tickets = $this->TicketManager->GetTickets($searchParams );
 
         $dataBs = [];

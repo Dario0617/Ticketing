@@ -4,6 +4,11 @@ namespace ticketing\model;
 
 class UserManager extends Manager
 {
+    /**
+     * Get User by Id
+     *
+     * @return User
+     */
     public function GetUserById($userId)
     {
         $sql = 'SELECT * FROM User WHERE Id=:id';
@@ -12,6 +17,11 @@ class UserManager extends Manager
         return new User($reponse->fetch(\PDO::FETCH_ASSOC));
     }
 
+    /**
+     * Get User by login if exist
+     *
+     * @return User
+     */
     public function GetUserByLogin(User $user)
     {
         $sql = 'SELECT * FROM User WHERE Login=:login';
@@ -24,6 +34,11 @@ class UserManager extends Manager
         return false;
     }
 
+    /**
+     * Check login Exist
+     *
+     * @return bool
+     */
     public function LoginExist($login)
     {
         $sql = 'SELECT * FROM User WHERE Login=:login';
@@ -32,12 +47,90 @@ class UserManager extends Manager
         return $reponse->rowCount();
     }
 
+    /**
+     * Create User
+     *
+     * @return User
+     */
     public function CreateUser(User $user)
     {
-        $sql = 'INSERT INTO User (Login, Password) VALUES (:login,:password)';
+        $sql = 'INSERT INTO User (Login, Password, Admin) VALUES (:login,:password, 0)';
         $reponse = $this->manager->db->prepare( $sql );
         $reponse->execute(array(':login'=>$user->GetLogin(), ':password'=>$user->GetPassword()));
         $user->SetId($this->manager->db->lastInsertId());
         return $user;
+    }
+
+    /**
+     * Count tickets
+     *
+     * @return integer
+     */
+    public function CountAll()
+    {
+        $sql = "SELECT count(*) FROM User";
+        $response = $this->manager->db->query( $sql );
+        $nbUsers = $response->fetch();
+        return $nbUsers[0];
+    }
+
+    /**
+     * Get Users
+     *
+     * @return list User
+     */
+    public function GetUsers(array $params)
+    {
+        $order = !empty( $params['order'] ) ? $params['order'] : 'ASC';
+        $sort = !empty( $params['sort'] ) ? $params['sort'] : 'id';
+        $limit = !empty( $params['limit'] ) ? $params['limit'] : 10;
+        $offset = !empty( $params['offset'] ) ? $params['offset'] : 0;
+        $strLike = false;
+        if( !empty( $params['search'] ) && !empty( $params['searchable'] ) ) {
+            foreach( $params['searchable'] as $searchItem ) {
+                if ($searchItem == "type"){
+                    $searchItem = "RequestType.Name";
+                }
+                if ($searchItem == "priority"){
+                    $searchItem = "Priority.Name";
+                }
+                $search = $params['search'];
+                $strLike .= $searchItem . " LIKE '%$search%' OR ";
+            }
+            $strLike = trim( $strLike, ' OR ' );
+        }
+        $sql = "SELECT * FROM User";
+        if( $strLike ) {
+            $sql .= " WHERE $strLike";
+        }
+        $sql .= " ORDER BY $sort $order";
+        $sql .= " LIMIT $offset, $limit";
+        $response = $this->manager->db->query( $sql );
+		$dataList = $response->fetchAll( \PDO::FETCH_ASSOC );
+        $users = [];
+		foreach ( $dataList as $data ) {
+			$users[] = new User( $data );
+		}
+        return $users;
+    }
+
+    /**
+     * Update User
+     */
+    public function UpdateUser(User $user)
+    {
+        $sql = 'UPDATE User SET Admin = :admin WHERE Id = :id';
+        $reponse = $this->manager->db->prepare( $sql );
+        return $reponse->execute(array(':admin'=>$user->GetAdmin(), ':id'=>$user->GetId()));
+    }
+
+    /**
+     * Delete User
+     */
+    public function DeleteUser(int $userId)
+    {
+        $sql = 'DELETE FROM User WHERE Id = :id';
+        $reponse = $this->manager->db->prepare( $sql );
+        return $reponse->execute(array(':id'=>$userId));
     }
 }
