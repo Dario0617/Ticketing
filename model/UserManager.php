@@ -101,11 +101,15 @@ class UserManager extends Manager
         }
         $sql = "SELECT * FROM User";
         if( $strLike ) {
-            $sql .= " WHERE $strLike";
+            $sql .= " WHERE $strLike AND Id <> :id";
+        }
+        if (!$strLike){
+            $sql .= " WHERE Id <> :id ";
         }
         $sql .= " ORDER BY $sort $order";
         $sql .= " LIMIT $offset, $limit";
-        $response = $this->manager->db->query( $sql );
+        $response = $this->manager->db->prepare( $sql );
+        $response->execute(array(':id'=>$_SESSION['user']->GetId()));    
 		$dataList = $response->fetchAll( \PDO::FETCH_ASSOC );
         $users = [];
 		foreach ( $dataList as $data ) {
@@ -120,8 +124,8 @@ class UserManager extends Manager
     public function UpdateUser(User $user)
     {
         $sql = 'UPDATE User SET Admin = :admin WHERE Id = :id';
-        $reponse = $this->manager->db->prepare( $sql );
-        return $reponse->execute(array(':admin'=>$user->GetAdmin(), ':id'=>$user->GetId()));
+        $response = $this->manager->db->prepare( $sql );
+        return $response->execute(array(':admin'=>$user->GetAdmin(), ':id'=>$user->GetId()));
     }
 
     /**
@@ -130,7 +134,7 @@ class UserManager extends Manager
     public function DeleteUser(int $userId)
     {
         $sql = 'DELETE FROM User WHERE Id = :id';
-        $reponse = $this->manager->db->prepare( $sql );
-        return $reponse->execute(array(':id'=>$userId));
+        $response = $this->manager->db->prepare( $sql );
+        return $response->execute(array(':id'=>$userId));
     }
 }

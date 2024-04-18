@@ -99,7 +99,8 @@ class TicketController extends Controller
                 }
             }            
             $ticket = new Ticket(['type'=>$type, 'priority'=>$priority, 'subject'=>$subject, 'message'=>$message, 
-            'file'=>$nameFile, 'creationDate'=>date("Y-m-d H:i:s"), 'lastModificationDate'=>date("Y-m-d H:i:s")]);
+            'file'=>$nameFile, 'creationDate'=>date("Y-m-d H:i:s"), 'lastModificationDate'=>date("Y-m-d H:i:s"), 
+            'userId'=>$_SESSION['user']->GetId()]);
             $this->TicketManager->CreateTicket($ticket);
             $data['alert'] = 'alert-success';
             $data['message'] = "Le ticket a été créé avec succès";
@@ -147,9 +148,12 @@ class TicketController extends Controller
             'onlyClosed'    => $this->vars['isclose'] == 1,
             'onlyOpened'     => $this->vars['isnotclose'] == 1
         ];
-
-        $nbTickets = $this->TicketManager->CountAll($searchParams) ?? 0;
+        
+        // $nbTickets = $this->TicketManager->CountAll($searchParams) ?? 0;
         $tickets = $this->TicketManager->GetTickets($searchParams );
+        $searchParams['offset'] = "";
+        $searchParams['limit'] = "";
+        $nbTickets = count($this->TicketManager->GetTickets($searchParams ));
 
         $dataBs = [];
         foreach( $tickets as $ticket ) {

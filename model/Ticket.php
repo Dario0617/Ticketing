@@ -15,6 +15,7 @@ class Ticket {
     protected $CreationDate;
     protected $LastModificationDate;
     protected $Closed;
+    protected $UserId;
 
     public function __construct(array $data){
         $this->Hydrate($data);
@@ -99,6 +100,15 @@ class Ticket {
     public function SetClosed($closed)
     {
         return $this->Closed = $closed;
+    }
+
+    public function GetUserId()
+    {
+        return $this->UserId;
+    }
+    public function SetUserId($userId)
+    {
+        return $this->UserId = $userId;
     }
 
     /**

@@ -9,9 +9,9 @@ class TicketManager extends Manager
         $sql = 'SELECT Ticket.*, RequestType.Name AS Type, Priority.Name AS Priority FROM Ticket 
             INNER JOIN RequestType ON Ticket.RequestTypeId = RequestType.Id 
             INNER JOIN Priority ON Ticket.PriorityId = Priority.Id WHERE Ticket.Id=:id';
-        $reponse = $this->manager->db->prepare( $sql );
-        $reponse->execute(array(':id'=>$ticketId));
-        return new Ticket($reponse->fetch(\PDO::FETCH_ASSOC));
+        $response = $this->manager->db->prepare( $sql );
+        $response->execute(array(':id'=>$ticketId));
+        return new Ticket($response->fetch(\PDO::FETCH_ASSOC));
     }
 
     public function GetTickets(array $params)
@@ -37,24 +37,33 @@ class TicketManager extends Manager
         $sql = "SELECT Ticket.*, RequestType.Name AS Type, Priority.Name AS Priority FROM Ticket 
             INNER JOIN RequestType ON Ticket.RequestTypeId = RequestType.Id 
             INNER JOIN Priority ON Ticket.PriorityId = Priority.Id";
-        if( $strLike ) {
-            $sql .= " WHERE $strLike";
+        $whereUsed = false;
+        if (!$_SESSION['user']->GetAdmin()){
+            $sql .= " WHERE UserId = " . $_SESSION['user']->GetId();
+            $whereUsed = true;
         }
+        if( $strLike ) {
+            if ($whereUsed){
+                $sql .= " AND (" . $strLike . ")";
+            } else {
+                $sql .= " WHERE " . $strLike;
+                $whereUsed = true;
+            }
+        }
+        $sqlClosed = false;
         if ($params['onlyClosed']){
             $sqlClosed = "Ticket.Closed = 1";
-            if( $strLike ) {
-                $sql .= " AND " . $sqlClosed;
-            }else{
-                $sql .= " WHERE " . $sqlClosed;
-            }
         } elseif ($params['onlyOpened']){
             $sqlClosed = "Ticket.Closed = 0";
-            if( $strLike ) {
-                $sql .= " AND " . $sqlClosed;
-            }else{
-                $sql .= " WHERE " . $sqlClosed;
-            }
         }
+        if ($sqlClosed){
+            if ($whereUsed){
+                $sql .= " AND " . $sqlClosed;
+            } else {
+                $sql .= " WHERE " . $sqlClosed;
+                $whereUsed = true;
+            }
+        }        
         $sql .= " ORDER BY $sort $order";
         $sql .= " LIMIT $offset, $limit";
         $response = $this->manager->db->query( $sql );
@@ -74,12 +83,12 @@ class TicketManager extends Manager
     public function CreateTicket(Ticket $ticket)
     {
         date_default_timezone_set('Europe/Paris');
-        $sql = 'INSERT INTO Ticket (RequestTypeId, PriorityId, Subject, Message, File, CreationDate, LastModificationDate)
-         VALUES (:requestTypeId, :priorityId, :subject, :message, :file, :creationDate, :lastModificationDate)';
+        $sql = 'INSERT INTO Ticket (RequestTypeId, PriorityId, Subject, Message, File, CreationDate, LastModificationDate, UserId)
+         VALUES (:requestTypeId, :priorityId, :subject, :message, :file, :creationDate, :lastModificationDate, :userId)';
         $reponse = $this->manager->db->prepare( $sql );
         $reponse->execute(array(':requestTypeId'=>$ticket->GetType(), ':priorityId'=>$ticket->GetPriority(), 
         ':subject'=>$ticket->GetSubject(), ':message'=>$ticket->GetMessage(), ':file'=>$ticket->GetFile(), 
-        ':creationDate'=>date("Y-m-d H:i:s"), ':lastModificationDate'=>date("Y-m-d H:i:s")));
+        ':creationDate'=>date("Y-m-d H:i:s"), ':lastModificationDate'=>date("Y-m-d H:i:s"), ':userId'=>$ticket->GetUserId()));
         $ticket->SetId($this->manager->db->lastInsertId());
         return $ticket;
     }
@@ -109,8 +118,8 @@ class TicketManager extends Manager
     {
         date_default_timezone_set('Europe/Paris');
         $sql = 'UPDATE Ticket SET LastModificationDate = :lastModificationDate, Closed = :closed WHERE Id = :id';
-        $reponse = $this->manager->db->prepare( $sql );
-        return $reponse->execute(array(':lastModificationDate'=>date("Y-m-d H:i:s"), ':closed'=>$ticket->GetClosed(), 
+        $response = $this->manager->db->prepare( $sql );
+        return $response->execute(array(':lastModificationDate'=>date("Y-m-d H:i:s"), ':closed'=>$ticket->GetClosed(), 
         ':id'=>$ticket->GetId()));
     }
 }
