@@ -1,4 +1,12 @@
-Options -MultiViews
+Options +Indexes +FollowSymLinks
 RewriteEngine on
 #RewriteRule .* public/index.php [L]
 RewriteRule ^([a-zA-Z0-9\-\_\/]*)$ public/index.php?$1 [QSA]
+
+AuthUserFile "/home/dario/PPE/.htpasswd"
+AuthType Basic
+AuthName "Zone Sécurisée"
+Require valid-user
+
+#Dario
+#motdepasse
