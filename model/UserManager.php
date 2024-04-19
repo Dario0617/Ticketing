@@ -66,10 +66,11 @@ class UserManager extends Manager
      *
      * @return integer
      */
-    public function CountAll()
+    public function CountAll(int $id)
     {
-        $sql = "SELECT count(*) FROM User";
-        $response = $this->manager->db->query( $sql );
+        $sql = "SELECT count(*) FROM User WHERE Id <> :id";
+        $response = $this->manager->db->prepare( $sql );
+        $response->execute(array(':id'=>$id));  
         $nbUsers = $response->fetch();
         return $nbUsers[0];
     }

@@ -43,7 +43,7 @@ class UserController extends Controller
 			'searchable'	=> $this->vars['searchable']
         ];
 
-        $nbTickets = $this->UserManager->CountAll() ?? 0;
+        $nbTickets = $this->UserManager->CountAll($_SESSION['user']->GetId()) ?? 0;
         $users = $this->UserManager->GetUsers($searchParams);
 
         $dataBs = [];
