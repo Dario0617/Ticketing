@@ -7,6 +7,3 @@ AuthUserFile "/home/dario/PPE/.htpasswd"
 AuthType Basic
 AuthName "Zone Sécurisée"
 Require valid-user
-
-#Dario
-#motdepasse
